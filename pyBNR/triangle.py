@@ -13,13 +13,13 @@ class Triangle():
     """
 
     def __init__(self):
-        self.tri = None
+        self.cum = None
+        self.inc = None
 
     def __repr__(self):
-        if self.tri is not None:
+        if self.cum is not None:
             # this required that the triangle object has the following colnames
-            return str(self.tri.pivot(index='origin', columns='development',
-                       values='value'))
+            return str(self.cum.unstack())
 
     def read_csv(self, filename, cummulative=True, **kwargs):
         """
@@ -32,28 +32,34 @@ class Triangle():
         :param cummulative: whether the provided triangle is cummulative.
         :type cummulative: bool.
         :returns: None"""
-        self.tri = pd.read_csv(filename, **kwargs)
+        tri = pd.read_csv(filename, **kwargs)
 
-        if not cummulative:
-            # adjust triangle to be cummulative
-            self.tri = self._inc_to_cum(self.tri)
+        # TODO add controls on column names
+        tri = tri.set_index(['origin', 'development'])
 
-    def _cum_to_inc(triangle):
+        # depending on whether the provided file is cummulative or
+        # incremental, we need to generate the other one
+        if cummulative:
+            self.cum = tri
+            self.inc = self._cum_to_inc(self.cum)
+        elif not cummulative:
+            self.inc = tri
+            self.cum = self._inc_to_cum(self.inc)
+
+    def _inc_to_cum(self, triangle):
         """
-        Change a given cummulative triangle into an incremental triangle.
-
-        :param triangle: a triangle data.frame
-        :type triangle: data.frame
-        :returns: incremental triangle
+        Helper function to translate incremental trianlges into cummulative
         """
-        pass
+        triangle = triangle.unstack()
+        triangle = triangle.cumsum(axis=1)
+        return triangle.stack()
 
-    def _inc_to_cum(triangle):
+    def _cum_to_inc(self, triangle):
         """
-        Change a given incremental triangle into an cummulative triangle.
-
-        :param triangle: a triangle data.frame
-        :type triangle: data.frame
-        :returns: cummulativetriangle
+        Helper function to translate cummulative trianlges into incremental
         """
-        pass
+        triangle = triangle.unstack()
+        shifted = triangle.shift(1, axis=1)
+        shifted['value', 1].fillna(0, inplace=True)
+        triangle = triangle - shifted
+        return triangle.stack()
