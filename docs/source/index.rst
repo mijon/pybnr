@@ -11,6 +11,9 @@ Welcome to pyBNR's documentation
    :caption: Contents:
 
    introduction
+   background
+
+   triangle
 
 
 Indices and tables
