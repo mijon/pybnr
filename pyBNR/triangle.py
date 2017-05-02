@@ -15,6 +15,12 @@ class Triangle():
     def __init__(self):
         self.tri = None
 
+    def __repr__(self):
+        if self.tri is not None:
+            # this required that the triangle object has the following colnames
+            return str(self.tri.pivot(index='origin', columns='development',
+                       values='value'))
+
     def read_csv(self, filename, cummulative=True, **kwargs):
         """
         Reads in a triangle contained in a csv file.
@@ -23,7 +29,7 @@ class Triangle():
 
         :param filename: csv filename location
         :type filename: str.
-        :param cummulative: whether the provided triangle is cummulative or not.
+        :param cummulative: whether the provided triangle is cummulative.
         :type cummulative: bool.
         :returns: None"""
         self.tri = pd.read_csv(filename, **kwargs)
