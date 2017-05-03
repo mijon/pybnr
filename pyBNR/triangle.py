@@ -32,7 +32,7 @@ class Triangle():
         :param cummulative: whether the provided triangle is cummulative.
         :type cummulative: bool.
         :returns: None"""
-        tri = pd.read_csv(filename, **kwargs)
+        tri = pd.read_csv(filename, dtype={'value':'float'}, **kwargs)
 
         # TODO add controls on column names
         tri = tri.set_index(['origin', 'development'])
@@ -45,6 +45,7 @@ class Triangle():
         elif not cummulative:
             self.inc = tri
             self.cum = self._inc_to_cum(self.inc)
+
 
     def _inc_to_cum(self, triangle):
         """
