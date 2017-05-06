@@ -72,10 +72,25 @@ class Dev_Triangle():
 
     def __init__(self, triangle):
         self.cum = triangle.cum
+        self.dev_tri = self._calc_year_to_year()
 
-    def calc_year_to_year(self):
+    def _calc_year_to_year(self):
         """Calculates year to year development factors"""
-        pass
+        triangle = self.cum.unstack()
+        shifted = triangle.shift(-1, axis=1)
+
+        devs = shifted/triangle
+        dev_periods_from = list(devs.columns.levels[1])
+        dev_periods_to = dev_periods_from[1:]
+        dev_periods_to.append(pd.np.nan)
+
+        devs.loc['from'] = dev_periods_from
+        devs.loc['to'] = dev_periods_to
+
+        devs = devs.stack()
+        devs['exclude'] = False
+
+        return devs
 
     def exclude_factors(self):
         """Mark year to year factors to exclude."""
