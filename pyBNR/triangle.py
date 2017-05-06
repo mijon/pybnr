@@ -1,5 +1,5 @@
 """
-This module contains the Triangle class.
+This module contains the Triangle and the DevTriangle classes.
 
 For theoretical background, refer to :ref:`triangles-background`
 """
@@ -32,7 +32,7 @@ class Triangle():
         :param cummulative: whether the provided triangle is cummulative.
         :type cummulative: bool.
         :returns: None"""
-        tri = pd.read_csv(filename, dtype={'value':'float'}, **kwargs)
+        tri = pd.read_csv(filename, dtype={'value': 'float'}, **kwargs)
 
         # TODO add controls on column names
         tri = tri.set_index(['origin', 'development'])
@@ -45,7 +45,6 @@ class Triangle():
         elif not cummulative:
             self.inc = tri
             self.cum = self._inc_to_cum(self.inc)
-
 
     def _inc_to_cum(self, triangle):
         """
@@ -64,3 +63,27 @@ class Triangle():
         shifted['value', 1].fillna(0, inplace=True)
         triangle = triangle - shifted
         return triangle.stack()
+
+
+class Dev_Triangle():
+    """This class provides various functions for calculating development
+    factors, excluding certain factors and calculating averages. These are
+    used in various triangle-based methods."""
+
+    def __init__(self, triangle):
+        self.cum = triangle.cum
+
+    def calc_year_to_year(self):
+        """Calculates year to year development factors"""
+        pass
+
+    def exclude_factors(self):
+        """Mark year to year factors to exclude."""
+        pass
+
+    def calculate_averages(self):
+        """Calculates average development factors."""
+        pass
+
+    def apply_tail_factor(self):
+        pass
